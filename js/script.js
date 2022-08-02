@@ -97,6 +97,63 @@ for (let i = 0; i < width; i++) {
     board.append(cell);
   }
 }
-console.log(grid);
-grid[0][23].classList.add("yellow");
+
+grid[0][22].classList.add("yellow");
 grid[9][23].classList.add("yellow");
+
+// main class for block
+// properties: coordinates, x and y for a b c and d each
+// functions: draw block,
+// remove block,
+// rotate(remove block, change coordinates, draw block),
+// drop(remove block, increase y coordinates, draw block),
+// move sideways(remove block, change x coordinates, draw block)
+
+class Block {
+  constructor(Ax, Ay, Bx, By, Cx, Cy, Dx, Dy, color) {
+    this.Ax = Ax;
+    this.Ay = Ay;
+    this.Bx = Bx;
+    this.By = By;
+    this.Cx = Cx;
+    this.Cy = Cy;
+    this.Dx = Dx;
+    this.Dy = Dy;
+    this.color = color;
+  }
+  drawBlock() {
+    grid[this.Ax][this.Ay].classList.add(this.color);
+    grid[this.Bx][this.By].classList.add(this.color);
+    grid[this.Cx][this.Cy].classList.add(this.color);
+    grid[this.Dx][this.Dy].classList.add(this.color);
+  }
+  removeBlock() {
+    grid[this.Ax][this.Ay].classList.remove(this.color);
+    grid[this.Bx][this.By].classList.remove(this.color);
+    grid[this.Cx][this.Cy].classList.remove(this.color);
+    grid[this.Dx][this.Dy].classList.remove(this.color);
+  }
+  dropBlock() {
+    this.removeBlock();
+    this.Ay += 1;
+    this.By += 1;
+    this.Cy += 1;
+    this.Dy += 1;
+    this.drawBlock();
+  }
+  shiftBlock(direction) {
+    this.removeBlock();
+    this.Ax += direction;
+    this.Bx += direction;
+    this.Cx += direction;
+    this.Dx += direction;
+    this.drawBlock();
+  }
+}
+
+const yellowL = new Block(4, 0, 5, 0, 6, 0, 4, 1, "yellow");
+yellowL.drawBlock();
+yellowL.dropBlock();
+yellowL.dropBlock();
+yellowL.dropBlock();
+yellowL.shiftBlock(-2);
