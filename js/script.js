@@ -120,6 +120,8 @@ class Block {
     this.Ox = Ox;
     this.Oy = Oy;
     this.color = color;
+    // this.addEventlistener("keyup", this.onKeyup);
+    // this.addEventListener("keyup", this.onKeyup.bind(this));
   }
   drawBlock() {
     grid[this.Ax][this.Ay].classList.add(this.color);
@@ -133,6 +135,7 @@ class Block {
     grid[this.Cx][this.Cy].classList.remove(this.color);
     grid[this.Ox][this.Oy].classList.remove(this.color);
   }
+
   dropBlock() {
     this.removeBlock();
     this.Ay += 1;
@@ -176,11 +179,16 @@ class Block {
     this.Cy = -(oldCx - this.Ox) + this.Oy;
     this.drawBlock();
   }
+  onKeyup(event) {
+    const key = event.code;
+    if (key === "ArrowDown") {
+      this.dropBlock();
+    }
+  }
 }
 
 const yellowL = new Block(4, 1, 4, 0, 6, 0, 5, 0, "yellow");
 yellowL.drawBlock();
-yellowL.dropBlock();
 yellowL.dropBlock();
 yellowL.dropBlock();
 yellowL.shiftBlock(-2);
