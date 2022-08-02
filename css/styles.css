@@ -7,15 +7,16 @@ body {
     justify-content: center;
 }
 
-#container {
+#board {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     width: 320px;
     height: 768px;
     justify-content: space-evenly;
 }
 
-#container>div {
+#board>div {
     text-align: center;
     border: 1px solid black;
     width: 30px;
