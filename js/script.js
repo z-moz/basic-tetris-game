@@ -1,88 +1,3 @@
-// const canvas = document.getElementById("gameCanvas");
-// const ctx = canvas.getContext("2d");
-
-// function drawTeeshape() {
-//   ctx.fillRect(150, 0, 50, 50);
-//   ctx.fillRect(200, 0, 50, 50);
-//   ctx.fillRect(250, 0, 50, 50);
-//   ctx.fillRect(200, 50, 50, 50);
-// }
-
-// drawTeeshape();
-
-// const squares = document.querySelectorAll(".square");
-// let a = 0;
-// let b = 0;
-// let c = 0;
-// let d = 0;
-// let squareColor = "yellow";
-
-// function rotation1() {
-//   a = 14;
-//   b = 15;
-//   c = 16;
-//   d = 17;
-// }
-
-// function rotation2() {
-//   a -= 8;
-//   b += 1;
-//   c += 10;
-//   d += 19;
-// }
-
-// function rotation3() {
-//   a += 21;
-//   b += 10;
-//   c -= 1;
-//   d -= 12;
-// }
-
-// function rotation4() {
-//   a += 8;
-//   b -= 1;
-//   c -= 10;
-//   d -= 19;
-// }
-
-// function rotation5() {
-//   a -= 21;
-//   b -= 10;
-//   c += 1;
-//   d += 12;
-// }
-
-// function spawnBlock() {
-//   squares[a].classList.add(squareColor);
-//   squares[b].classList.add(squareColor);
-//   squares[c].classList.add(squareColor);
-//   squares[d].classList.add(squareColor);
-// }
-
-// rotation1();
-// rotation2();
-// spawnBlock();
-
-// function removeBlock() {
-//   squares[a].classList.remove(squareColor);
-//   squares[b].classList.remove(squareColor);
-//   squares[c].classList.remove(squareColor);
-//   squares[d].classList.remove(squareColor);
-// }
-
-// function dropBlock() {
-//   removeBlock();
-//   a += 10;
-//   b += 10;
-//   c += 10;
-//   d += 10;
-//   spawnBlock();
-// }
-
-// dropBlock();
-// dropBlock();
-// dropBlock();
-
 const height = 24;
 const width = 10;
 const board = document.querySelector("#board");
@@ -98,16 +13,8 @@ for (let i = 0; i < width; i++) {
   }
 }
 
-grid[0][22].classList.add("yellow");
-grid[9][23].classList.add("yellow");
-
-// main class for block
-// properties: coordinates, x and y for a b c and d each
-// functions: draw block,
-// remove block,
-// rotate(remove block, change coordinates, draw block),
-// drop(remove block, increase y coordinates, draw block),
-// move sideways(remove block, change x coordinates, draw block)
+// grid[0][22].classList.add("yellow");
+// grid[9][23].classList.add("yellow");
 
 class Block {
   constructor(Ax, Ay, Bx, By, Cx, Cy, Ox, Oy, color) {
@@ -120,8 +27,7 @@ class Block {
     this.Ox = Ox;
     this.Oy = Oy;
     this.color = color;
-    // this.addEventlistener("keyup", this.onKeyup);
-    // this.addEventListener("keyup", this.onKeyup.bind(this));
+    document.addEventListener("keyup", this);
   }
   drawBlock() {
     grid[this.Ax][this.Ay].classList.add(this.color);
@@ -135,7 +41,6 @@ class Block {
     grid[this.Cx][this.Cy].classList.remove(this.color);
     grid[this.Ox][this.Oy].classList.remove(this.color);
   }
-
   dropBlock() {
     this.removeBlock();
     this.Ay += 1;
@@ -144,7 +49,6 @@ class Block {
     this.Oy += 1;
     this.drawBlock();
   }
-  // shiftBlock direction will be a + or - number
   shiftBlock(direction) {
     this.removeBlock();
     this.Ax += direction;
@@ -179,17 +83,23 @@ class Block {
     this.Cy = -(oldCx - this.Ox) + this.Oy;
     this.drawBlock();
   }
-  onKeyup(event) {
-    const key = event.code;
-    if (key === "ArrowDown") {
-      this.dropBlock();
+  handleEvent(e) {
+    switch (e.code) {
+      case "ArrowUp":
+        this.rotateClockwise();
+        break;
+      case "ArrowLeft":
+        this.shiftBlock(-1);
+        break;
+      case "ArrowRight":
+        this.shiftBlock(1);
+        break;
+      case "ArrowDown":
+        this.dropBlock();
+        break;
     }
   }
 }
 
 const yellowL = new Block(4, 1, 4, 0, 6, 0, 5, 0, "yellow");
 yellowL.drawBlock();
-yellowL.dropBlock();
-yellowL.dropBlock();
-yellowL.shiftBlock(-2);
-yellowL.rotateAnticlockwise();
