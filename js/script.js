@@ -1,34 +1,35 @@
-const height = 24;
-const width = 10;
+const rows = 24;
+const columns = 10;
 const board = document.querySelector("#board");
 
-let grid = new Array(width);
-for (let i = 0; i < width; i++) {
-  grid[i] = new Array(height);
-  for (let j = 0; j < height; j++) {
+let grid = new Array(rows);
+for (let i = 0; i < rows; i++) {
+  grid[i] = new Array(columns);
+  for (let j = 0; j < columns; j++) {
     const cell = document.createElement("div");
-    cell.classList.add("cell");
+    cell.classList.add("empty");
     grid[i][j] = cell;
     board.append(cell);
   }
 }
+// coordinates are: grid[y][x] or grid[row][column]
 
-grid[0][12].classList.add("yellow");
-grid[0][14].classList.add("yellow");
+// grid[0][8].classList.add("yellow");
+// grid[0][9].classList.add("yellow");
 
-grid[7][12].classList.add("yellow");
-grid[7][14].classList.add("yellow");
+// grid[7][5].classList.add("yellow");
+// grid[7][7].classList.add("yellow");
 
-for (let i = 0; i < width; i++) {
-  grid[i][23].classList.add("yellow");
-}
-// to delete column 7 from the HTML
-for (let i = 0; i < height; i++) {
-  grid[7][i].remove();
-}
-// to delete column 7 from the script
-grid.splice(7, 1);
-console.log(grid);
+// function switchRowToYellow(row) {
+//   grid[row].forEach((element) => {
+//     element.classList.add("yellow");
+//     element.classList.toggle("empty");
+//   });
+// }
+
+// switchRowToYellow(4);
+// switchRowToYellow(11);
+// switchRowToYellow(23);
 
 class Block {
   constructor(Ax, Ay, Bx, By, Cx, Cy, Ox, Oy, color) {
@@ -44,16 +45,24 @@ class Block {
     document.addEventListener("keyup", this);
   }
   drawBlock() {
-    grid[this.Ax][this.Ay].classList.add(this.color);
-    grid[this.Bx][this.By].classList.add(this.color);
-    grid[this.Cx][this.Cy].classList.add(this.color);
-    grid[this.Ox][this.Oy].classList.add(this.color);
+    grid[this.Ay][this.Ax].classList.add(this.color);
+    grid[this.By][this.Bx].classList.add(this.color);
+    grid[this.Cy][this.Cx].classList.add(this.color);
+    grid[this.Oy][this.Ox].classList.add(this.color);
+    grid[this.Ay][this.Ax].classList.toggle("empty");
+    grid[this.By][this.Bx].classList.toggle("empty");
+    grid[this.Cy][this.Cx].classList.toggle("empty");
+    grid[this.Oy][this.Ox].classList.toggle("empty");
   }
   removeBlock() {
-    grid[this.Ax][this.Ay].classList.remove(this.color);
-    grid[this.Bx][this.By].classList.remove(this.color);
-    grid[this.Cx][this.Cy].classList.remove(this.color);
-    grid[this.Ox][this.Oy].classList.remove(this.color);
+    grid[this.Ay][this.Ax].classList.remove(this.color);
+    grid[this.By][this.Bx].classList.remove(this.color);
+    grid[this.Cy][this.Cx].classList.remove(this.color);
+    grid[this.Oy][this.Ox].classList.remove(this.color);
+    grid[this.Ay][this.Ax].classList.toggle("empty");
+    grid[this.By][this.Bx].classList.toggle("empty");
+    grid[this.Cy][this.Cx].classList.toggle("empty");
+    grid[this.Oy][this.Ox].classList.toggle("empty");
   }
   dropBlock() {
     this.removeBlock();
@@ -115,5 +124,34 @@ class Block {
   }
 }
 
-const yellowL = new Block(0, 1, 0, 0, 2, 0, 1, 0, "yellow");
+function deleteFullRow() {
+  // finds full row, returns row number
+  for (let i = 0; i < rows; i++) {
+    let count = 0;
+    for (let j = 0; j < columns; j++) {
+      if (grid[i][j].classList.contains("empty") === false) {
+        count++;
+      }
+    }
+    if (count === 10) {
+      let fullRowNumber = i;
+      // deletes full row from HTML and then script
+      grid[fullRowNumber].forEach((element) => element.remove());
+      grid.splice(fullRowNumber, 1);
+      // add row 0 to the script and HTML
+      const newrowzero = new Array();
+      grid.unshift(newrowzero);
+      for (let k = 0; k < columns; k++) {
+        const cell = document.createElement("div");
+        cell.classList.add("empty");
+        newrowzero.unshift(cell);
+        board.prepend(cell);
+      }
+    }
+  }
+}
+
+const yellowL = new Block(5, 2, 6, 2, 8, 2, 7, 2, "yellow");
 yellowL.drawBlock();
+
+deleteFullRow();

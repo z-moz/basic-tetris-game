@@ -9,7 +9,6 @@ body {
 
 #board {
     display: flex;
-    flex-direction: column;
     flex-wrap: wrap;
     width: 320px;
     height: 768px;
