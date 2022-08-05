@@ -20,18 +20,45 @@ for (let i = 0; i < rows; i++) {
     board.append(cell);
   }
 }
+
+function deleteFullRow() {
+  // finds full row, returns row number
+  for (let i = 0; i < rows; i++) {
+    let count = 0;
+    for (let j = 0; j < columns; j++) {
+      if (grid[i][j].classList.contains("empty") === false) {
+        count++;
+      }
+    }
+    if (count === 10) {
+      let fullRowNumber = i;
+      // deletes full row from HTML and then script
+      grid[fullRowNumber].forEach((element) => element.remove());
+      grid.splice(fullRowNumber, 1);
+      // add row 0 to the script and HTML
+      const newrowzero = new Array();
+      grid.unshift(newrowzero);
+      for (let k = 0; k < columns; k++) {
+        const cell = document.createElement("div");
+        cell.classList.add("empty");
+        newrowzero.unshift(cell);
+        board.prepend(cell);
+      }
+    }
+  }
+}
+
 // NOTE order of coordinates: grid[y][x] or grid[row][column]
 
-// grid[0][8].classList.add("yellow");
-// grid[0][9].classList.add("yellow");
-
-// grid[7][5].classList.add("yellow");
-// grid[7][7].classList.add("yellow");
+grid[7][5].classList.add("yellow");
+grid[7][7].classList.add("yellow");
+grid[7][5].classList.toggle("empty");
+grid[7][7].classList.toggle("empty");
 
 function switchRowToYellow(row) {
   grid[row].forEach((element) => {
-    element.classList.add("yellow");
-    element.classList.remove("empty");
+    element.classList.toggle("yellow");
+    element.classList.toggle("empty");
   });
 }
 
@@ -51,7 +78,7 @@ class Block {
     this.color = color;
     document.addEventListener("keyup", this);
   }
-  drawBlock() {
+  draw() {
     grid[this.Ay][this.Ax].classList.add(this.color);
     grid[this.By][this.Bx].classList.add(this.color);
     grid[this.Cy][this.Cx].classList.add(this.color);
@@ -61,7 +88,7 @@ class Block {
     grid[this.Cy][this.Cx].classList.remove("empty");
     grid[this.Oy][this.Ox].classList.remove("empty");
   }
-  deleteBlock() {
+  delete() {
     grid[this.Ay][this.Ax].classList.remove(this.color);
     grid[this.By][this.Bx].classList.remove(this.color);
     grid[this.Cy][this.Cx].classList.remove(this.color);
@@ -134,8 +161,8 @@ class Block {
       return false;
     }
   }
-  moveBlock(a, b, operation) {
-    this.deleteBlock();
+  move(a, b, operation) {
+    this.delete();
     this.storeOrigXY();
     switch (operation) {
       case "rotate":
@@ -149,72 +176,58 @@ class Block {
     if (!this.isCellEmpty()) {
       this.returnOrigXY();
     }
-    this.drawBlock();
+    this.draw();
   }
   handleEvent(e) {
     switch (e.code) {
       case "ArrowUp":
-        this.moveBlock(-1, 1, "rotate");
+        this.move(-1, 1, "rotate");
         break;
       case "ArrowLeft":
-        this.moveBlock(-1, 0, "shift");
+        this.move(-1, 0, "shift");
         break;
       case "ArrowRight":
-        this.moveBlock(1, 0, "shift");
+        this.move(1, 0, "shift");
         break;
       case "ArrowDown":
-        this.moveBlock(0, 1, "shift");
-        // document.removeEventListener("keyup", this);
+        this.move(0, 1, "shift");
+        break;
+      case "Space":
+        this.stop();
         break;
     }
   }
-  // handleEvent(e) {
-  //   switch (e.code) {
-  //     case "ArrowUp":
-  //       this.rotateBlock(-1, 1);
-  //       break;
-  //     case "ArrowLeft":
-  //       this.shiftBlock(-1, 0);
-  //       break;
-  //     case "ArrowRight":
-  //       this.shiftBlock(1, 0);
-  //       break;
-  //     case "ArrowDown":
-  //       this.shiftBlock(0, 1);
-  //       // document.removeEventListener("keyup", this);
-  //       break;
-  //   }
-  // }
-}
-
-function deleteFullRow() {
-  // finds full row, returns row number
-  for (let i = 0; i < rows; i++) {
-    let count = 0;
-    for (let j = 0; j < columns; j++) {
-      if (grid[i][j].classList.contains("empty") === false) {
-        count++;
-      }
-    }
-    if (count === 10) {
-      let fullRowNumber = i;
-      // deletes full row from HTML and then script
-      grid[fullRowNumber].forEach((element) => element.remove());
-      grid.splice(fullRowNumber, 1);
-      // add row 0 to the script and HTML
-      const newrowzero = new Array();
-      grid.unshift(newrowzero);
-      for (let k = 0; k < columns; k++) {
-        const cell = document.createElement("div");
-        cell.classList.add("empty");
-        newrowzero.unshift(cell);
-        board.prepend(cell);
-      }
+  stop() {
+    clearInterval(interval);
+    document.removeEventListener("keyup", this);
+    // when highest row is filled with a block:
+    // alert("GAME OVER");
+  }
+  fall() {
+    this.delete();
+    this.storeOrigXY();
+    this.shiftXY(0, 1);
+    if (
+      this.Ay > 23 ||
+      this.By > 23 ||
+      this.Cy > 23 ||
+      this.Oy > 23 ||
+      !this.isCellEmpty()
+    ) {
+      this.stop();
+      this.returnOrigXY();
+      this.draw();
+    } else {
+      this.draw();
     }
   }
 }
 
-const yellowL = new Block(5, 2, 6, 2, 8, 2, 7, 2, "yellow");
-yellowL.drawBlock();
+// generate new active block
+const activeBlock = new Block(5, 2, 6, 2, 8, 2, 7, 2, "yellow");
+activeBlock.draw();
 
-// deleteFullRow();
+const interval = setInterval(function () {
+  activeBlock.fall(0, 1, "shift");
+  // deleteFullRow();
+}, 500);
