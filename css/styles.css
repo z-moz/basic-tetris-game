@@ -8,16 +8,18 @@ body {
 }
 
 #board {
+    box-sizing: content-box;
     display: flex;
     flex-wrap: wrap;
     width: 320px;
     height: 768px;
+    border: 2px solid lightgrey;
     justify-content: space-evenly;
 }
 
 #board>div {
     text-align: center;
-    border: 1px solid black;
+    border: 1px solid lightgrey;
     width: 30px;
     height: 30px;
 }

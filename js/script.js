@@ -23,21 +23,11 @@ const rows = 24;
 const columns = 10;
 const board = document.querySelector("#board");
 
-let grid = new Array(rows);
-for (let i = 0; i < rows; i++) {
-  grid[i] = new Array(columns);
-  for (let j = 0; j < columns; j++) {
-    const cell = document.createElement("div");
-    cell.classList.add("empty");
-    grid[i][j] = cell;
-    board.append(cell);
-  }
-}
-
 function generateBlock() {
   activeBlock = new Block(...arrayOfBlocks[Math.floor(Math.random() * 7)]);
   activeBlock.draw();
 }
+
 function deleteFullRow() {
   // finds full row, returns row number
   for (let i = 0; i < rows; i++) {
@@ -53,19 +43,31 @@ function deleteFullRow() {
       grid[fullRowNumber].forEach((element) => element.remove());
       grid.splice(fullRowNumber, 1);
       // add row 0 to the script and HTML
-      const newrowzero = new Array();
-      grid.unshift(newrowzero);
+      const newRow0 = new Array();
+      grid.unshift(newRow0);
       for (let k = 0; k < columns; k++) {
         const cell = document.createElement("div");
         cell.classList.add("empty");
-        newrowzero.unshift(cell);
+        newRow0.unshift(cell);
         board.prepend(cell);
       }
     }
   }
 }
 
+// create grid
 // order of coordinates: grid[y][x] or grid[row][column]
+let grid = new Array(rows);
+for (let i = 0; i < rows; i++) {
+  grid[i] = new Array(columns);
+  for (let j = 0; j < columns; j++) {
+    const cell = document.createElement("div");
+    cell.classList.add("empty");
+    grid[i][j] = cell;
+    board.append(cell);
+  }
+}
+
 class Block {
   constructor(Ax, Ay, Bx, By, Cx, Cy, Ox, Oy, color) {
     this.Ax = Ax;
