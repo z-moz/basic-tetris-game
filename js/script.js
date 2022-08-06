@@ -1,6 +1,13 @@
-const rows = 24;
-const columns = 10;
-const board = document.querySelector("#board");
+let arrayOfBlocks = [
+  [4, 0, 5, 0, 7, 0, 6, 0, "aqua"],
+  [4, 0, 4, 1, 6, 1, 5, 1, "blue"],
+  [4, 1, 6, 1, 6, 0, 5, 1, "darkorange"],
+  [4, 0, 4, 1, 5, 0, 5, 1, "yellow"],
+  [4, 1, 5, 0, 6, 0, 5, 1, "green"],
+  [4, 1, 5, 0, 6, 1, 5, 1, "blueviolet"],
+  [4, 0, 5, 0, 6, 1, 5, 1, "red"],
+];
+
 let oldAx;
 let oldBx;
 let oldCx;
@@ -9,6 +16,12 @@ let oldAy;
 let oldBy;
 let oldCy;
 let oldOy;
+let interval;
+let activeBlock;
+
+const rows = 24;
+const columns = 10;
+const board = document.querySelector("#board");
 
 let grid = new Array(rows);
 for (let i = 0; i < rows; i++) {
@@ -21,6 +34,10 @@ for (let i = 0; i < rows; i++) {
   }
 }
 
+function generateBlock() {
+  activeBlock = new Block(...arrayOfBlocks[Math.floor(Math.random() * 7)]);
+  activeBlock.draw();
+}
 function deleteFullRow() {
   // finds full row, returns row number
   for (let i = 0; i < rows; i++) {
@@ -48,23 +65,7 @@ function deleteFullRow() {
   }
 }
 
-// NOTE order of coordinates: grid[y][x] or grid[row][column]
-
-grid[7][5].classList.add("yellow");
-grid[7][7].classList.add("yellow");
-grid[7][5].classList.toggle("empty");
-grid[7][7].classList.toggle("empty");
-
-function switchRowToYellow(row) {
-  grid[row].forEach((element) => {
-    element.classList.toggle("yellow");
-    element.classList.toggle("empty");
-  });
-}
-
-switchRowToYellow(11);
-switchRowToYellow(23);
-
+// order of coordinates: grid[y][x] or grid[row][column]
 class Block {
   constructor(Ax, Ay, Bx, By, Cx, Cy, Ox, Oy, color) {
     this.Ax = Ax;
@@ -192,15 +193,14 @@ class Block {
       case "ArrowDown":
         this.move(0, 1, "shift");
         break;
-      case "Space":
-        this.stop();
-        break;
     }
   }
   stop() {
-    clearInterval(interval);
     document.removeEventListener("keyup", this);
+    deleteFullRow();
+    generateBlock();
     // when highest row is filled with a block:
+    // clearInterval(interval);
     // alert("GAME OVER");
   }
   fall() {
@@ -214,20 +214,16 @@ class Block {
       this.Oy > 23 ||
       !this.isCellEmpty()
     ) {
-      this.stop();
       this.returnOrigXY();
       this.draw();
+      this.stop();
     } else {
       this.draw();
     }
   }
 }
 
-// generate new active block
-const activeBlock = new Block(5, 2, 6, 2, 8, 2, 7, 2, "yellow");
-activeBlock.draw();
-
-const interval = setInterval(function () {
+generateBlock();
+interval = setInterval(function () {
   activeBlock.fall(0, 1, "shift");
-  // deleteFullRow();
 }, 500);

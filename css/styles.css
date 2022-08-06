@@ -22,6 +22,30 @@ body {
     height: 30px;
 }
 
+.aqua {
+    background-color: aqua;
+}
+
+.blue {
+    background-color: blue;
+}
+
+.darkorange {
+    background-color: darkorange;
+}
+
 .yellow {
     background-color: yellow;
+}
+
+.green {
+    background-color: green;
+}
+
+.blueviolet {
+    background-color: blueviolet;
+}
+
+.red {
+    background-color: red;
 }
