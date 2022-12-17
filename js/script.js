@@ -55,6 +55,18 @@ function deleteFullRow() {
   }
 }
 
+function isTopRowEmpty() {
+  let count = 0;
+  grid[0].forEach((element) => {
+    if (element.classList.contains("empty") === true) {
+      count++;
+    }
+  });
+  if (count != 10) {
+    return false;
+  }
+}
+
 // create grid
 // order of coordinates: grid[y][x] or grid[row][column]
 let grid = new Array(rows);
@@ -122,24 +134,24 @@ class Block {
     this.Oy = oldOy;
   }
   // to left: shiftXY(-1, 0), to right: shiftXY(1, 0), down: shiftXY(0, 1), up: shiftXY(0, -1)
-  shiftXY(a, b) {
-    this.Ax += a;
-    this.Bx += a;
-    this.Cx += a;
-    this.Ox += a;
-    this.Ay += b;
-    this.By += b;
-    this.Cy += b;
-    this.Oy += b;
+  shiftXY(dx, dy) {
+    this.Ax += dx;
+    this.Bx += dx;
+    this.Cx += dx;
+    this.Ox += dx;
+    this.Ay += dy;
+    this.By += dy;
+    this.Cy += dy;
+    this.Oy += dy;
   }
   // clockwise: rotateXY(-1,1), anticlockwise: rotateXY(1,-1)
-  rotateXY(a, b) {
-    this.Ax = a * (this.Ay - this.Oy) + this.Ox;
-    this.Ay = b * (oldAx - this.Ox) + this.Oy;
-    this.Bx = a * (this.By - this.Oy) + this.Ox;
-    this.By = b * (oldBx - this.Ox) + this.Oy;
-    this.Cx = a * (this.Cy - this.Oy) + this.Ox;
-    this.Cy = b * (oldCx - this.Ox) + this.Oy;
+  rotateXY(dx, dy) {
+    this.Ax = dx * (this.Ay - this.Oy) + this.Ox;
+    this.Ay = dy * (oldAx - this.Ox) + this.Oy;
+    this.Bx = dx * (this.By - this.Oy) + this.Ox;
+    this.By = dy * (oldBx - this.Ox) + this.Oy;
+    this.Cx = dx * (this.Cy - this.Oy) + this.Ox;
+    this.Cy = dy * (oldCx - this.Ox) + this.Oy;
   }
   wallKickFloorKick() {
     while (this.Ax < 0 || this.Bx < 0 || this.Cx < 0 || this.Ox < 0) {
@@ -164,15 +176,15 @@ class Block {
       return false;
     }
   }
-  move(a, b, operation) {
+  move(dx, dy, operation) {
     this.delete();
     this.storeOrigXY();
     switch (operation) {
       case "rotate":
-        this.rotateXY(a, b);
+        this.rotateXY(dx, dy);
         break;
       case "shift":
-        this.shiftXY(a, b);
+        this.shiftXY(dx, dy);
         break;
     }
     this.wallKickFloorKick();
@@ -200,10 +212,11 @@ class Block {
   stop() {
     document.removeEventListener("keyup", this);
     deleteFullRow();
+    if (isTopRowEmpty() === false) {
+      clearInterval(interval);
+      alert("GAME OVER");
+    }
     generateBlock();
-    // when highest row is filled with a block:
-    // clearInterval(interval);
-    // alert("GAME OVER");
   }
   fall() {
     this.delete();
