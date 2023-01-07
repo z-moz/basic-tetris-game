@@ -15,6 +15,7 @@ body {
     height: 768px;
     border: 2px solid lightgrey;
     justify-content: space-evenly;
+    background-color: #1f1d20;
 }
 
 #board>div {
